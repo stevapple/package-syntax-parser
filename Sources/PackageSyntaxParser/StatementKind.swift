@@ -12,14 +12,14 @@
 
 import SwiftSyntax
 
-enum StatementKind {
+enum KeyStatementKind {
     case package
     case `import`
     case others
 }
 
 extension CodeBlockItemSyntax {
-    var statementKind: StatementKind {
+    var statementKind: KeyStatementKind {
         let tokens = tokens.map(\.tokenKind)
         if tokens.starts(with: [.importKeyword]) {
             return .import
