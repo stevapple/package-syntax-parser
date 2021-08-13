@@ -1,7 +1,20 @@
 // swift-tools-version:5.5
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+// FIXME: This is a temporary alternative of the frontend implementation.
+//
+//===----------------------------------------------------------------------===//
 
 import PackageDescription
+import Foundation
 
 let package = Package(
     name: "package-syntax-parser",
@@ -12,11 +25,6 @@ let package = Package(
             targets: ["PackageSyntaxParser"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-tools-support-core.git", .branch("main")),
-        .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "0.4.3")),
-        .package(url: "https://github.com/apple/swift-syntax.git", .branch("main")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -32,3 +40,18 @@ let package = Package(
             dependencies: ["PackageSyntaxParser"]),
     ]
 )
+
+if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
+  // Building standalone.
+  package.dependencies += [
+    .package(url: "https://github.com/apple/swift-tools-support-core.git", .branch("main")),
+    .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "0.4.3")),
+    .package(url: "https://github.com/apple/swift-syntax", .branch("main")),
+  ]
+} else {
+  package.dependencies += [
+    .package(path: "../swift-tools-support-core"),
+    .package(path: "../swift-argument-parser"),
+    .package(path: "../swift-syntax"),
+  ]
+}
