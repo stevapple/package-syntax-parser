@@ -29,6 +29,10 @@ func parseStringArgument(_ tokens: inout [TokenSyntax], label: String? = nil) th
     guard case .stringLiteral(let string) = tokens.removeFirst().tokenKind else {
         throw PackageSyntaxParserError.wrongSyntax
     }
+    if !tokens.isEmpty,
+       tokens.removeFirst().tokenKind != .comma {
+        throw PackageSyntaxParserError.wrongSyntax
+    }
     return string.unescaped()
 }
 
