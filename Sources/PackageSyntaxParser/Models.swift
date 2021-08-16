@@ -14,7 +14,7 @@ import struct Foundation.URL
 import SwiftSyntax
 import TSCBasic
 
-struct PackageModel: Codable {
+struct PackageModel: Codable, Equatable {
     let raw: String
     let path: AbsolutePath?
     let url: URL?
@@ -28,7 +28,7 @@ struct PackageModel: Codable {
     }
 }
 
-struct PackageDependency: Codable {
+struct PackageDependency: Codable, Equatable {
     let package: PackageModel
     var modules: [String] = []
 
@@ -37,7 +37,7 @@ struct PackageDependency: Codable {
     }
 }
 
-struct ScriptDependencies: Codable {
+struct ScriptDependencies: Codable, Equatable {
     let sourceFile: AbsolutePath
     let modules: [PackageDependency]
 }

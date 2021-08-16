@@ -22,22 +22,27 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .executable(
             name: "package-syntax-parser",
-            targets: ["PackageSyntaxParser"]),
+            targets: ["package-syntax-parser"]),
     ],
     dependencies: [
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .executableTarget(
+        // FIXME: This target is only for testing use, SwiftPM bug?
+        .target(
             name: "PackageSyntaxParser",
             dependencies: [
                 .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "SwiftSyntax", package: "swift-syntax")]),
+        .executableTarget(
+            name: "package-syntax-parser",
+            dependencies: ["PackageSyntaxParser"]),
         .testTarget(
             name: "PackageSyntaxParserTests",
-            dependencies: ["PackageSyntaxParser"]),
+            dependencies: [
+                .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core"),
+                .product(name: "TSCTestSupport", package: "swift-tools-support-core"),
+                "PackageSyntaxParser"]),
     ]
 )
 
