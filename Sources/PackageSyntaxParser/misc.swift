@@ -13,22 +13,25 @@
 import Foundation
 import SwiftSyntax
 
+/// Consume and return the first argument from `tokens` if `label` matches.
 func parseStringArgument(_ tokens: inout [TokenSyntax], label: String? = nil) throws -> String? {
     if let label = label {
-        // parse label
+        // Parse the label
         guard case .identifier(let labelString) = tokens.first?.tokenKind,
             labelString == label else {
             return nil
         }
         tokens.removeFirst()
-        // parse colon
+        // Parse colon
         guard case .colon = tokens.removeFirst().tokenKind else {
             throw PackageSyntaxParserError.wrongSyntax
         }
     }
+    // Parse the value
     guard case .stringLiteral(let string) = tokens.removeFirst().tokenKind else {
         throw PackageSyntaxParserError.wrongSyntax
     }
+    // Eat the trailing comma
     if !tokens.isEmpty,
        tokens.removeFirst().tokenKind != .comma {
         throw PackageSyntaxParserError.wrongSyntax

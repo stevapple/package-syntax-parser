@@ -14,10 +14,15 @@ import struct Foundation.URL
 import SwiftSyntax
 import TSCBasic
 
+/// The model that represents a SwiftPM package dependency, or `PackageDescription.Dependency`.
 struct PackageModel: Codable, Equatable {
+    /// The raw body of `@package(...)`.
     let raw: String
+    /// The path to the local directory of the package.
     let path: AbsolutePath?
+    /// The URL of a remote package.
     let url: URL?
+    /// The user-defined name for a local package.
     let name: String?
 
     init(_ raw: String, path: AbsolutePath? = nil, url: URL? = nil, name: String? = nil) {
@@ -28,8 +33,11 @@ struct PackageModel: Codable, Equatable {
     }
 }
 
+/// The model that represents a SwiftPM package dependency and modules from it.
 struct PackageDependency: Codable, Equatable {
+    /// The package dependency.
     let package: PackageModel
+    /// Modules imported from the package.
     var modules: [String] = []
 
     init(of package: PackageModel) {
@@ -37,8 +45,11 @@ struct PackageDependency: Codable, Equatable {
     }
 }
 
+/// The model that represents parsed SwiftPM dependency info from a script.
 struct ScriptDependencies: Codable, Equatable {
+    /// The path to the script file.
     let sourceFile: AbsolutePath
+    /// The parsed dependencies.
     let modules: [PackageDependency]
 }
 

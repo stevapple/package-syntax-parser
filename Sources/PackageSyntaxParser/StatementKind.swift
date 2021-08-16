@@ -12,6 +12,7 @@
 
 import SwiftSyntax
 
+/// Key statement kind for `package-syntax-parser`.
 enum KeyStatementKind {
     case package
     case `import`
