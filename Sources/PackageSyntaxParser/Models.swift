@@ -50,7 +50,7 @@ struct ScriptDependencies: Codable, Equatable {
     /// The path to the script file.
     let sourceFile: AbsolutePath
     /// The parsed dependencies.
-    let modules: [PackageDependency]
+    let dependencies: [PackageDependency]
 }
 
 enum PackageSyntaxParserError: Swift.Error, CustomStringConvertible {

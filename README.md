@@ -47,7 +47,7 @@ The output is:
 
 ```json
 {
-  "modules" : [
+  "dependencies" : [
     {
       "package" : {
         "raw" : "url:\"https:\/\/github.com\/apple\/swift-log.git\",from:\"1.0.0\"",

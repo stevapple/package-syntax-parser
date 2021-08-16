@@ -65,8 +65,8 @@ final class PackageSyntaxParserTests: XCTestCase {
         try withTemporaryFile { file in
             try file.fileHandle.write(contentsOf: supportedSource.data(using: .utf8)!)
             let parsed = try PackageSyntaxParser.parse(file.path)
-            XCTAssertEqual(parsed.modules.count, 1)
-            let packageDependency = parsed.modules.first!
+            XCTAssertEqual(parsed.dependencies.count, 1)
+            let packageDependency = parsed.dependencies.first!
             XCTAssertEqual(packageDependency.modules, ["MyLibrary", "MyLibraryV2"])
             XCTAssertEqual(packageDependency.package.path, AbsolutePath("/path/to/package"))
             XCTAssertNil(packageDependency.package.url)
@@ -77,8 +77,8 @@ final class PackageSyntaxParserTests: XCTestCase {
         try withTemporaryFile { file in
             try file.fileHandle.write(contentsOf: alternativeSource.data(using: .utf8)!)
             let parsed = try PackageSyntaxParser.parse(file.path)
-            XCTAssertEqual(parsed.modules.count, 1)
-            let packageDependency = parsed.modules.first!
+            XCTAssertEqual(parsed.dependencies.count, 1)
+            let packageDependency = parsed.dependencies.first!
             XCTAssertEqual(packageDependency.modules, ["MyLibrary"])
             XCTAssertNil(packageDependency.package.path)
             XCTAssertEqual(packageDependency.package.url, URL(string: "https://localhost:8000/path/to/package"))
@@ -105,8 +105,8 @@ final class PackageSyntaxParserTests: XCTestCase {
         try withTemporaryFile { file in
             try file.fileHandle.write(contentsOf: duplicatedPackageSource.data(using: .utf8)!)
             let parsed = try PackageSyntaxParser.parse(file.path)
-            XCTAssertEqual(parsed.modules.count, 1)
-            let packageDependency = parsed.modules.first!
+            XCTAssertEqual(parsed.dependencies.count, 1)
+            let packageDependency = parsed.dependencies.first!
             XCTAssertEqual(packageDependency.modules, ["MyLibrary", "MyLibraryV2"])
             XCTAssertEqual(packageDependency.package.path, AbsolutePath("/path/to/package"))
             XCTAssertNil(packageDependency.package.url)

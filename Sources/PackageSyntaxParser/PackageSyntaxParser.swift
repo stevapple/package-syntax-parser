@@ -104,7 +104,7 @@ extension PackageSyntaxParser {
                 fatalError()
             }
         }
-        return ScriptDependencies(sourceFile: path, modules: collected)
+        return ScriptDependencies(sourceFile: path, dependencies: collected)
     }
 
     public func run() throws {
