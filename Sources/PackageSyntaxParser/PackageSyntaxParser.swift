@@ -79,7 +79,13 @@ extension PackageSyntaxParser {
                 } else {
                     package = PackageModel(desc)
                 }
-                collected.append(PackageDependency(of: package))
+                /// Merge duplicated `@package`s.
+                if let idx = collected.map(\.package).firstIndex(of: package) {
+                    let entry = collected.remove(at: idx)
+                    collected.append(entry)
+                } else {
+                    collected.append(PackageDependency(of: package))
+                }
 
             case .import:
                 /// Dropping `import`.

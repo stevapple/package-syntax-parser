@@ -9,6 +9,7 @@
  
  FIXME: This is a temporary alternative of the frontend implementation.
  */
+
 @testable import PackageSyntaxParser
 import SwiftSyntax
 import TSCBasic
@@ -16,7 +17,7 @@ import TSCTestSupport
 import XCTest
 
 final class PackageSyntaxParserTests: XCTestCase {
-    let supportedSourceString = """
+    let supportedSource = """
         @package(path: "/path/to/package", name: "my-package")
         import MyLibrary
         import MyLibraryV2
@@ -24,26 +25,36 @@ final class PackageSyntaxParserTests: XCTestCase {
         print(MyLibrary.text)
         """
     
-    let alternativeSourceString = """
+    let alternativeSource = """
         @package(url: "https://localhost:8000/path/to/package", from: "1.0.0")
         import MyLibrary
         """
     
-    let unsupportedSourceString = """
+    let duplicatedPackageSource = """
+        @package(path: "/path/to/package", name: "my-package")
+        import MyLibrary
+        
+        @package(path:"/path/to/package" , name:"my-package")
+        import MyLibraryV2
+        
+        print(MyLibrary.text)
+        """
+    
+    let unsupportedSource = """
         @package(path: import)
         import MyLibrary.V3
         """
     
     func testStatementKind() throws {
         do {
-            let syntaxTree = try SyntaxParser.parse(source: supportedSourceString)
+            let syntaxTree = try SyntaxParser.parse(source: supportedSource)
             let statementKinds = syntaxTree.statements.map(\.statementKind)
             XCTAssertEqual(statementKinds.count, 4)
             XCTAssertEqual(statementKinds, [.package, .import, .import, .others])
         }
         
         do {
-            let syntaxTree = try SyntaxParser.parse(source: unsupportedSourceString)
+            let syntaxTree = try SyntaxParser.parse(source: unsupportedSource)
             let statementKinds = syntaxTree.statements.map(\.statementKind)
             XCTAssertEqual(statementKinds.count, 2)
             XCTAssertEqual(statementKinds, [.package, .import])
@@ -52,7 +63,7 @@ final class PackageSyntaxParserTests: XCTestCase {
     
     func testParse() throws {
         try withTemporaryFile { file in
-            try file.fileHandle.write(contentsOf: supportedSourceString.data(using: .utf8)!)
+            try file.fileHandle.write(contentsOf: supportedSource.data(using: .utf8)!)
             let parsed = try PackageSyntaxParser.parse(file.path)
             XCTAssertEqual(parsed.modules.count, 1)
             let packageDependency = parsed.modules.first!
@@ -64,7 +75,7 @@ final class PackageSyntaxParserTests: XCTestCase {
         }
         
         try withTemporaryFile { file in
-            try file.fileHandle.write(contentsOf: alternativeSourceString.data(using: .utf8)!)
+            try file.fileHandle.write(contentsOf: alternativeSource.data(using: .utf8)!)
             let parsed = try PackageSyntaxParser.parse(file.path)
             XCTAssertEqual(parsed.modules.count, 1)
             let packageDependency = parsed.modules.first!
@@ -78,7 +89,7 @@ final class PackageSyntaxParserTests: XCTestCase {
     }
     
     func testPrint() throws {
-        try [supportedSourceString, alternativeSourceString].forEach { string in
+        try [supportedSource, alternativeSource].forEach { string in
             try withTemporaryFile { file in
                 try file.fileHandle.write(contentsOf: string.data(using: .utf8)!)
                 let parsed = try PackageSyntaxParser.parse(file.path)
@@ -87,6 +98,20 @@ final class PackageSyntaxParserTests: XCTestCase {
                 let decoded = try JSONDecoder().decode(ScriptDependencies.self, from: encoded)
                 XCTAssertEqual(parsed, decoded)
             }
+        }
+    }
+    
+    func testDuplicatedPackage() throws {
+        try withTemporaryFile { file in
+            try file.fileHandle.write(contentsOf: duplicatedPackageSource.data(using: .utf8)!)
+            let parsed = try PackageSyntaxParser.parse(file.path)
+            XCTAssertEqual(parsed.modules.count, 1)
+            let packageDependency = parsed.modules.first!
+            XCTAssertEqual(packageDependency.modules, ["MyLibrary", "MyLibraryV2"])
+            XCTAssertEqual(packageDependency.package.path, AbsolutePath("/path/to/package"))
+            XCTAssertNil(packageDependency.package.url)
+            XCTAssertEqual(packageDependency.package.name, "my-package")
+            XCTAssertEqual(packageDependency.package.raw, "path:\"/path/to/package\",name:\"my-package\"")
         }
     }
 }
