@@ -19,12 +19,9 @@ import Foundation
 let package = Package(
     name: "package-syntax-parser",
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .executable(
             name: "package-syntax-parser",
             targets: ["package-syntax-parser"]),
-    ],
-    dependencies: [
     ],
     targets: [
         // FIXME: This target is only for testing use, SwiftPM bug?
@@ -41,22 +38,21 @@ let package = Package(
             name: "PackageSyntaxParserTests",
             dependencies: [
                 .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core"),
-                .product(name: "TSCTestSupport", package: "swift-tools-support-core"),
                 "PackageSyntaxParser"]),
     ]
 )
 
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
-  // Building standalone.
-  package.dependencies += [
-    .package(url: "https://github.com/apple/swift-tools-support-core.git", .branch("main")),
-    .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "0.4.3")),
-    .package(url: "https://github.com/apple/swift-syntax", .branch("main")),
-  ]
+    // Building standalone.
+    package.dependencies += [
+        .package(url: "https://github.com/apple/swift-tools-support-core.git", .branch("main")),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "0.4.3")),
+        .package(url: "https://github.com/apple/swift-syntax", .branch("main")),
+    ]
 } else {
-  package.dependencies += [
-    .package(path: "../swift-tools-support-core"),
-    .package(path: "../swift-argument-parser"),
-    .package(path: "../swift-syntax"),
-  ]
+    package.dependencies += [
+        .package(path: "../swift-tools-support-core"),
+        .package(path: "../swift-argument-parser"),
+        .package(path: "../swift-syntax"),
+    ]
 }

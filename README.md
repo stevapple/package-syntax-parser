@@ -30,7 +30,7 @@ struct Count: ParsableCommand {
     @Argument var inputFile: String
     @Argument var outputFile: String
 
-    mutating func run() throws {
+    func run() throws {
         let logger = Logger(label: "com.example.Script.main")
         logger.info("""
             Counting words in '\(inputFile)' \

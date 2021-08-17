@@ -13,7 +13,6 @@
 @testable import PackageSyntaxParser
 import SwiftSyntax
 import TSCBasic
-import TSCTestSupport
 import XCTest
 
 final class PackageSyntaxParserTests: XCTestCase {
