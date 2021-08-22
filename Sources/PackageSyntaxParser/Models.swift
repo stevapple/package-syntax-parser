@@ -22,10 +22,10 @@ struct PackageModel: Codable, Equatable {
     let path: AbsolutePath?
     /// The URL of a remote package.
     let url: URL?
-    /// The user-defined name for a local package.
+    /// The user-defined name for a package.
     let name: String?
 
-    init(_ raw: String, path: AbsolutePath? = nil, url: URL? = nil, name: String? = nil) {
+    init(_ raw: String, path: AbsolutePath? = nil, url: URL? = nil, name: String?) {
         self.raw = raw
         self.path = path
         self.url = url

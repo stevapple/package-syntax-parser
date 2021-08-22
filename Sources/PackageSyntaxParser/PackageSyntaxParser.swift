@@ -69,15 +69,15 @@ extension PackageSyntaxParser {
                 let desc = tokens.map(\.text).joined()
                 let package: PackageModel
                 /// Parsing the arguments.
+                let name = try parseStringArgument(&tokens, label: "name")
                 if let _path = try parseStringArgument(&tokens, label: "path"),
                    case let path = AbsolutePath(_path, relativeTo: path.parentDirectory) {
-                    let name = try parseStringArgument(&tokens, label: "name")
                     package = PackageModel(desc.replacingOccurrences(of: _path, with: path.pathString), path: path, name: name)
                 } else if let _url = try parseStringArgument(&tokens, label: "url"),
                           let url = URL(string: _url) {
-                    package = PackageModel(desc, url: url)
+                    package = PackageModel(desc, url: url, name: name)
                 } else {
-                    package = PackageModel(desc)
+                    package = PackageModel(desc, name: name)
                 }
                 /// Merge duplicated `@package`s.
                 if let idx = collected.map(\.package).firstIndex(of: package) {

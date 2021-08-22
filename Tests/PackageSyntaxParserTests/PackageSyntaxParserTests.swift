@@ -17,7 +17,7 @@ import XCTest
 
 final class PackageSyntaxParserTests: XCTestCase {
     let supportedSource = """
-        @package(path: "/path/to/package", name: "my-package")
+        @package(path: "/path/to/package")
         import MyLibrary
         import MyLibraryV2
         
@@ -30,10 +30,10 @@ final class PackageSyntaxParserTests: XCTestCase {
         """
     
     let duplicatedPackageSource = """
-        @package(path: "/path/to/package", name: "my-package")
+        @package(name: "my-package", path: "/path/to/package")
         import MyLibrary
         
-        @package(path:"/path/to/package" , name:"my-package")
+        @package(name:"my-package", path:"/path/to/package")
         import MyLibraryV2
         
         print(MyLibrary.text)
@@ -69,8 +69,8 @@ final class PackageSyntaxParserTests: XCTestCase {
             XCTAssertEqual(packageDependency.modules, ["MyLibrary", "MyLibraryV2"])
             XCTAssertEqual(packageDependency.package.path, AbsolutePath("/path/to/package"))
             XCTAssertNil(packageDependency.package.url)
-            XCTAssertEqual(packageDependency.package.name, "my-package")
-            XCTAssertEqual(packageDependency.package.raw, "path:\"/path/to/package\",name:\"my-package\"")
+            XCTAssertNil(packageDependency.package.name)
+            XCTAssertEqual(packageDependency.package.raw, "path:\"/path/to/package\"")
         }
         
         try withTemporaryFile { file in
@@ -110,7 +110,7 @@ final class PackageSyntaxParserTests: XCTestCase {
             XCTAssertEqual(packageDependency.package.path, AbsolutePath("/path/to/package"))
             XCTAssertNil(packageDependency.package.url)
             XCTAssertEqual(packageDependency.package.name, "my-package")
-            XCTAssertEqual(packageDependency.package.raw, "path:\"/path/to/package\",name:\"my-package\"")
+            XCTAssertEqual(packageDependency.package.raw, "name:\"my-package\",path:\"/path/to/package\"")
         }
     }
 }
